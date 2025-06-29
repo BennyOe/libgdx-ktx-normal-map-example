@@ -37,6 +37,10 @@ abstract class AbstractLightEngine(
     protected val shaderLights get() = lights.take(maxShaderLights)
     protected var normalInfluenceValue: Float = 1f
     protected var lastNormalMap: Texture? = null
+    protected var lastSpecularMap: Texture? = null
+    protected var specularIntensityValue = 32f
+    protected var specularRemapMin = 0.1f
+    protected var specularRemapMax = 0.5f
     private val density = Gdx.graphics.backBufferScale
 
 
@@ -57,6 +61,8 @@ abstract class AbstractLightEngine(
 
         shader.bind()
         shader.setUniformi("u_normals", 1)
+        shader.setUniformi("u_specular", 2)
+
     }
 
     /**
@@ -264,6 +270,26 @@ abstract class AbstractLightEngine(
     }
 
     /**
+     * Sets the intensity of the specular highlight for the lighting shader.
+     *
+     * @param intensity The strength of the specular effect. Higher values result in brighter and sharper highlights.
+     */
+    fun setSpecularIntensity(intensity: Float) {
+        specularIntensityValue = intensity
+        println(specularIntensityValue)
+    }
+
+    /**
+     * Sets the contrast remapping for the specular map.
+     * @param min The gray value in the texture to be treated as black (0.0).
+     * @param max The gray value in the texture to be treated as white (1.0).
+     */
+    fun setSpecularRemap(min: Float, max: Float) {
+        this.specularRemapMin = min
+        this.specularRemapMax = max
+    }
+
+    /**
      * Removes a specific light from the engine.
      * @param light The [GameLight] instance to remove.
      */
@@ -333,6 +359,9 @@ abstract class AbstractLightEngine(
         shader.setUniformi("lightCount", shaderLights.size)
         shader.setUniformf("normalInfluence", normalInfluenceValue)
         shader.setUniformf("ambient", shaderAmbient)
+        shader.setUniformf("u_specularIntensity", specularIntensityValue)
+        shader.setUniformf("u_specularRemapMin", specularRemapMin)
+        shader.setUniformf("u_specularRemapMax", specularRemapMax)
 
 
         // Scale the viewport uniforms to match the physical pixel space of gl_FragCoord.
@@ -349,6 +378,7 @@ abstract class AbstractLightEngine(
             val data = lights[i].shaderLight
             val prefix = "[$i]"
             shader.setUniformf("lightColor$prefix", vec4(data.color.r, data.color.g, data.color.b, data.color.a * data.intensity))
+            shader.setUniformf("shininess", 32f)
 
             when (data) {
                 is ShaderLight.Directional -> {

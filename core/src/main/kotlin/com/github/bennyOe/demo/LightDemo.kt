@@ -18,7 +18,7 @@ import ktx.math.vec2
  * and provides interactive controls for manipulating their properties in real time.
  *
  * Features:
- * - Switch between point and spot lights.
+ * - Switch between point and spotlights.
  * - Toggle the directional light on and off.
  * - Adjust intensity, distance, balance, and cone angle of lights.
  * - Change light color using the mouse wheel.
@@ -35,6 +35,7 @@ import ktx.math.vec2
  * - E/D: Increase/decrease active light shader balance
  * - R/F: Increase/decrease spot light cone degree (only for spot light)
  * - T/G: Increase/decrease spot light cone rotation (only for spot light)
+ * - Y/H: Increase/decrease specular intensity
  * - I/K: Increase/decrease directional light intensity
  * - O/L: Rotate directional light
  * - Mouse wheel: Change active light color
@@ -53,6 +54,7 @@ class LightDemo : AbstractLightDemo() {
         private const val DIRECTIONAL_INTENSITY_SPEED = 2.5f
         private const val DIRECTIONAL_ANGLE_SPEED = 15f
         private const val COLOR_SCROLL_SPEED = 5f
+        private const val SPECULAR_INTENSITY_SPEED = 40f
     }
 
     private lateinit var lightEngine: LightEngine
@@ -67,6 +69,7 @@ class LightDemo : AbstractLightDemo() {
     private var isDirectionalLightOn = true
     private var yScrollAmount = 0f
     private var isNormalInfluence: Boolean = true
+    private var specularIntensity: Float = 32f
 
     override fun show() {
         super.show()
@@ -113,6 +116,8 @@ class LightDemo : AbstractLightDemo() {
         activeLight = pointLight          // Point light is active by default
 
         lightEngine.setNormalInfluence(0.8f)
+        lightEngine.setSpecularRemap(0.3f, 0.7f)
+        lightEngine.setSpecularIntensity(specularIntensity)
     }
 
     override fun resize(width: Int, height: Int) {
@@ -132,8 +137,9 @@ class LightDemo : AbstractLightDemo() {
         lightEngine.update()
 
         lightEngine.renderLights { engine ->
-            engine.draw(wall, wallNormals, 0f, 0f, 9f, 19f)
-            engine.draw(wood, woodNormals, 9f, 0f, 9f, 19f)
+//            engine.draw(wall, wallNormals, 0f, 0f, 9f, 19f)
+//            engine.draw(wood, woodNormals, 9f, 0f, 9f, 19f)
+            engine.draw(plank, plankNormals, plankSpecular, 0f, 0f, 19f, 19f)
 
         }
         // Render Box2D debug lines
@@ -189,6 +195,16 @@ class LightDemo : AbstractLightDemo() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             if (isNormalInfluence) lightEngine.setNormalInfluence(0f) else lightEngine.setNormalInfluence(1f)
             isNormalInfluence = !isNormalInfluence
+        }
+
+        // specular controls
+        if (Gdx.input.isKeyPressed(Input.Keys.Y)) {
+            specularIntensity += SPECULAR_INTENSITY_SPEED * delta
+            lightEngine.setSpecularIntensity(specularIntensity)
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.H)) {
+            specularIntensity -= SPECULAR_INTENSITY_SPEED * delta
+            lightEngine.setSpecularIntensity(specularIntensity)
         }
 
         // Always allow control over the directional light
