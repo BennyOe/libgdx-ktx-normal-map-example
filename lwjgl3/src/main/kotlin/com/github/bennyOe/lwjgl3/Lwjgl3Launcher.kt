@@ -5,7 +5,6 @@ package com.github.bennyOe.lwjgl3
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import com.github.bennyOe.GgdxNormalMapExample
-import org.lwjgl.opengl.GL20
 
 /** Launches the desktop (LWJGL3) application. */
 fun main() {
@@ -24,7 +23,7 @@ fun main() {
         //// useful for testing performance, but can also be very stressful to some hardware.
         //// You may also need to configure GPU drivers to fully disable Vsync; this can cause screen tearing.
 
-        setWindowedMode(640, 480)
+        setWindowedMode(960, 480)
         //// You can change these files; they are in lwjgl3/src/main/resources/ .
         //// They can also be loaded from the root of assets/ .
         setWindowIcon(*(arrayOf(128, 64, 32, 16).map { "libgdx$it.png" }.toTypedArray()))
