@@ -25,6 +25,9 @@ abstract class AbstractLightDemo : KtxScreen {
     protected lateinit var wallNormals: Texture
     protected lateinit var wood: Texture
     protected lateinit var woodNormals: Texture
+    protected lateinit var plank: Texture
+    protected lateinit var plankNormals: Texture
+    protected lateinit var plankSpecular: Texture
 
     protected val world = World(vec2(0f, -9.81f), true)
     protected val rayHandler = RayHandler(world)
@@ -41,6 +44,10 @@ abstract class AbstractLightDemo : KtxScreen {
 
         wood = Texture("wood.jpg")
         woodNormals = Texture("wood_normal.jpg")
+
+        plank = Texture("plank.png")
+        plankNormals = Texture("plank_normal.png")
+        plankSpecular = Texture("plank_spec1.png")
 
         createWalls()
     }
@@ -96,5 +103,9 @@ abstract class AbstractLightDemo : KtxScreen {
         wallNormals.disposeSafely()
         wood.disposeSafely()
         woodNormals.disposeSafely()
+
+        plank.disposeSafely()
+        plankNormals.disposeSafely()
+        plankSpecular.disposeSafely()
     }
 }

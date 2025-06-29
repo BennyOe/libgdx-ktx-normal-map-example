@@ -46,6 +46,7 @@ class LightEngine(
         batch.begin()
 
         lastNormalMap = null
+        lastSpecularMap = null
         drawScene(this)
 
         batch.end()
@@ -53,6 +54,48 @@ class LightEngine(
 
         rayHandler.setCombinedMatrix(cam)
         rayHandler.updateAndRender()
+    }
+
+    /**
+     * Draws a textured quad with a diffuse, a normal and a specular map, binding them to the correct texture units.
+     *
+     * This method binds the provided diffuse texture to texture unit 0, the normal map to texture unit 1 and the specular map to texture unit 2,
+     * ensuring they are properly used by the lighting shader. It should only be called within the [renderLights] lambda.
+     *
+     * If the normal map or specular map differs from the previously used one, the batch is flushed to prevent texture conflicts.
+     *
+     * @param diffuse The diffuse texture (base color).
+     * @param normals The corresponding normal map texture.
+     * @param specular The corresponding specular map texture.
+     * @param x The x-position in world coordinates.
+     * @param y The y-position in world coordinates.
+     * @param width The width of the quad to draw.
+     * @param height The height of the quad to draw.
+     */
+    fun draw(
+        diffuse: Texture,
+        normals: Texture,
+        specular: Texture,
+        x: Float, y: Float,
+        width: Float, height: Float,
+    ) {
+        if (lastNormalMap == null || normals != lastNormalMap) {
+            batch.flush()
+        }
+        shader.bind()
+        shader.setUniformi("u_useNormalMap", 1)
+        shader.setUniformi("u_useSpecularMap", 1)
+
+        if (lastSpecularMap == null || specular != lastSpecularMap) {
+            batch.flush()
+        }
+
+        normals.bind(1)
+        specular.bind(2)
+        diffuse.bind(0)
+        batch.draw(diffuse, x, y, width, height)
+        lastNormalMap = normals
+        lastSpecularMap = specular
     }
 
     /**
@@ -81,11 +124,13 @@ class LightEngine(
         }
         shader.bind()
         shader.setUniformi("u_useNormalMap", 1)
+        shader.setUniformi("u_useSpecularMap", 0)
 
         normals.bind(1)
         diffuse.bind(0)
         batch.draw(diffuse, x, y, width, height)
         lastNormalMap = normals
+        lastSpecularMap = null
     }
 
     override fun resize(width: Int, height: Int) {
@@ -114,10 +159,12 @@ class LightEngine(
 
         shader.bind()
         shader.setUniformi("u_useNormalMap", 0)
+        shader.setUniformi("u_useSpecularMap", 0)
 
         diffuse.bind(0)
         batch.draw(diffuse, x, y, width, height)
         lastNormalMap = null
+        lastSpecularMap = null
     }
 
 }

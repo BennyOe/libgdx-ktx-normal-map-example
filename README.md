@@ -14,6 +14,9 @@ The engine allows you to use dynamic lighting to add depth and atmosphere to you
 - **Normal Mapping**  
   Add surface detail and depth to your 2D sprites using normal maps.
 
+- **Specular Mapping**  
+  Add material properties to your sprites, allowing for shiny surfaces and highlights.
+- 
 - **Multiple Light Types**  
   - **Point Lights**: Emit light in all directions from a single point, with configurable falloff.  
   - **Spot Lights**: Emit light in a cone, perfect for flashlights or focused effects.  
@@ -34,10 +37,16 @@ The engine allows you to use dynamic lighting to add depth and atmosphere to you
 
 ---
 
+## Limitations
+
+- **Desktop Only**  
+  The engine is currently designed for desktop platforms and may not perform well on mobile devices due to the complexity of per-pixel lighting calculations.
+
 ## Dependencies & Setup
 
 - **Language**: Kotlin  
 - **Dependencies**: LibGDX, Box2D, Box2DLights  
+- **Based on**: The great work of https://gist.github.com/mattdesl/4653464
 - **Optional**: LibKTX (used in the demo, but not required)
 
 ### Gradle

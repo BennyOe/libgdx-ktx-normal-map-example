@@ -74,19 +74,30 @@ class Scene2dLightEngine(
             if (lastNormalMap == null || lastNormalMap != actor.normalMapTexture) {
                 batch.flush()
             }
-            shader.bind()
-            shader.setUniformi("u_useNormalMap", 1)
 
-            actor.normalMapTexture.bind(1)
+            actor.normalMapTexture?.let {
+                it.bind(1)
+                shader.bind()
+                shader.setUniformi("u_useNormalMap", 1)
+                lastNormalMap = actor.normalMapTexture
+            }
+            actor.specularTexture?.let {
+                shader.bind()
+                shader.setUniformi("u_useSpecularMap", 1)
+                it.bind(2)
+                lastSpecularMap = actor.specularTexture
+            }
             actor.diffuseTexture.bind(0)
             batch.draw(actor.diffuseTexture, actor.x, actor.y, actor.width, actor.height)
-            lastNormalMap = actor.normalMapTexture
         } else {
             if (lastNormalMap != null) batch.flush()
+            if (lastSpecularMap != null) batch.flush()
             shader.bind()
             shader.setUniformi("u_useNormalMap", 0)
+            shader.setUniformi("u_useSpecularMap", 0)
             actor.draw(batch, 1.0f)
             lastNormalMap = null
+            lastSpecularMap = null
         }
     }
 
